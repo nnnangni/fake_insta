@@ -19,14 +19,24 @@ def create(request):
             # 12. 적절한 데이터가 들어오는 경우, 데이터를 저장하고 list페이지로 리다이렉트!
             form.save()
             return redirect("posts:list")
-        else:
-            # 7. 적절하지 않은 데이터가 들어오는 경우
-            pass
+        # else:
+        #     # 7. 적절하지 않은 데이터가 들어오는 경우
+        #     pass
     else: # get방식이면 폼을 보여줌
         # 2. PostForm을 인스턴스화 시켜서 form에 저장한다.
         form = PostForm()
     # 3. form을 담아서 create.html을 보내준다.
     # 8. 사용자가 입력한 데이터는 form에 담아진 상태로 다시 form을 담아서 create.html을 보내준다.
-    return render(request, 'posts/create.html', {'form':form})
+    return render(request, 'posts/form.html', {'form':form})
         
-    
+def update(request, id):
+    # 게시물을 수정하려면 기존의 데이터 필요
+    post = Post.objects.get(id=id)
+    if request.method == "POST":
+        form = PostForm(request.POST, instance=post)
+        if form.is_valid():
+            form.save()
+            return redirect("posts:list")
+    else:
+        form = PostForm(instance=post)
+    return render(request, 'posts/form.html',{'form':form})
