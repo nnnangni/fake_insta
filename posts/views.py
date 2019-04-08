@@ -33,10 +33,16 @@ def update(request, id):
     # 게시물을 수정하려면 기존의 데이터 필요
     post = Post.objects.get(id=id)
     if request.method == "POST":
-        form = PostForm(request.POST, instance=post)
+        form = PostForm(request.POST, instance=post) # create와 update는 instance=post 빼고는 구조가 같음.
         if form.is_valid():
             form.save()
             return redirect("posts:list")
     else:
         form = PostForm(instance=post)
     return render(request, 'posts/form.html',{'form':form})
+    
+def delete(request,id):
+    post = Post.objects.get(id=id)
+    post.delete()
+    
+    return redirect("posts:list")
