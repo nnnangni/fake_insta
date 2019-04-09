@@ -13,7 +13,7 @@ def create(request):
     # 9. 사용자가 다시 적절한 데이터를 입력해서 post방식으로 요청한다.
     if request.method == "POST": # 저장
         # 5. 10. post방식으로 저장요청을 받고, 데이터를 받아 PostForm에 넣어서 인스턴스화 한다.
-        form = PostForm(request.POST)
+        form = PostForm(request.POST, request.FILES)
         # 6. 11. 데이터 검증을 한다.
         if form.is_valid():
             # 12. 적절한 데이터가 들어오는 경우, 데이터를 저장하고 list페이지로 리다이렉트!
