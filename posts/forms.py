@@ -1,5 +1,5 @@
 from django import forms
-from .models import Post, Image
+from .models import Post, Image, Comment
 
 class PostForm(forms.ModelForm):
     class Meta:
@@ -15,3 +15,10 @@ class ImageForm(forms.ModelForm):
         widgets = {
             'file' : forms.FileInput(attrs={'multiple':True})
         }
+        
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        # fields = '__all__' # 입력을 받을 수 있도록 사용자에게 보여주는 곳    
+        fields = ['content',] # content만 입력받으면 되기 때문에!!!!!!!!!!
+    

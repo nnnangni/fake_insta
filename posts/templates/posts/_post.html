@@ -28,8 +28,19 @@
     <p class="card-text">{{post.content}}</p>
     <!--내가 작성한 게시물에만 수정, 삭제가 가능하게끔-->
     {% if post.user == user %}
+      <!--몇번글을 수정하고 지울지?-->
       <a href="{% url 'posts:update' post.id %}" class="btn btn-warning">수정</a>
       <a href="{% url 'posts:delete' post.id %}" class="btn btn-danger">삭제</a>
     {% endif %}  
+  </div>
+  <div class="card-body">
+    <!--몇번글에 댓글을 달지?-->
+    <form action="{% url 'posts:comment_create' post.id %}" method="post">
+      {% csrf_token %}
+      {{comment_form.content}}
+      <input type="submit" value="제출"/>
+    </form>
+      
+
   </div>
 </div>
