@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from .forms import PostForm, ImageForm, CommentForm
-from .models import Post
+from .models import Post, Comment
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 
 # Create your views here.
 def list(request):
@@ -63,14 +64,16 @@ def update(request, id):
 
 @login_required
 def delete(request,id):
+    # 지우고싶은 게시물 찾고
     post = Post.objects.get(id=id)
+    # 로그인한 유저랑 게시물작성 유저랑 같은지 확인
     if post.user == request.user:
         post.delete()
-        return redirect("posts:list")
-    else:
-        return redirect("posts:list")
+    return redirect("posts:list")
+
 
 @login_required
+@require_POST # comment_create가 POST방식이 아닐 땐 튕김.
 def comment_create(request, post_id):
     if request.method == 'POST':
         comment_form = CommentForm(request.POST)
@@ -80,3 +83,50 @@ def comment_create(request, post_id):
             comment.post = Post.objects.get(id=post_id)
             comment.save() # auto_now_add 를 이미 줘서 그냥 저장됨.
             return redirect("posts:list")
+    
+@login_required
+def comment_delete(request, post_id, comment_id):
+    # 코멘트 찾기
+    comment = Comment.objects.get(id=comment_id)
+    if comment.user == request.user:
+        comment.delete()
+    return redirect("posts:list")
+
+# 이건 되는데 왜 되는지 모르게뜸
+# @login_required
+# def comment_delete(request, post_id):
+#     comment = Comment.objects.get(id=post_id)
+#     comment.delete()
+#     return redirect("posts:list")
+
+# 수정전코드
+# @login_required
+# def like(request):
+#     user = request.user
+#     post = Post.objects.get(id=id)
+#     likes = post.like_set.all()
+#     check = 0
+#     for like in likes:
+#         if user == like.user:
+#             check = 1
+#             like_post = like
+#     if check == 1:
+#         like_post.delete()
+#     else:
+#         like = Like(user=user, post=post)
+#         like.save()
+#     return redirect('posts:list')
+
+@login_required
+def like(request,id):
+    # 현재 로그인한 사람의 정보
+    user = request.user
+    # 게시물
+    post = Post.objects.get(id=id)
+    # 사용자가 좋아요를 눌렀다면(사용자가 좋아요 목록에 있니?)
+    if user in post.likes.all():
+        post.likes.remove(user)
+    # 사용자가 좋아요를 누르지 않았다면
+    else:
+        post.likes.add(user)
+    return redirect('posts:list')

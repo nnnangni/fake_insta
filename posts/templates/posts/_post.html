@@ -25,7 +25,16 @@
   {% endif %}
   
   <div class="card-body">
-    <p class="card-text">{{post.content}}</p>
+    <!--좋아요버튼시작-->
+    {% if user in post.likes.all %}
+    <!--지금 로그인한 유저가 이 게시물 좋아요를 눌렀니?-->
+      <a href="{% url 'posts:like' post.id %}"><i class="fas fa-heart" style="color:#ed4956"></i></a>
+    {% else %}
+      <a href="{% url 'posts:like' post.id %}"><i class="far fa-heart" style="color:black"></i></a>
+    {% endif %}
+    <!--좋아요버튼끝-->
+    <p class="card-text"><strong>{{post.user}}</strong>{{post.content}}</p>
+    <p class="card-test">좋아요 {{post.likes.count}}개</p>
     <!--내가 작성한 게시물에만 수정, 삭제가 가능하게끔-->
     {% if post.user == user %}
       <!--몇번글을 수정하고 지울지?-->
@@ -33,6 +42,20 @@
       <a href="{% url 'posts:delete' post.id %}" class="btn btn-danger">삭제</a>
     {% endif %}  
   </div>
+  <!--댓글을 보여주는 부분-->
+  <div class="card-body">
+    {% for comment in post.comment_set.all %}
+      <p class="card-text"><strong>{{comment.user}}</strong> {{comment.content}}</p>
+      <!--삭제버튼-->
+      {% if comment.user == user %}
+        <a class="btn btn-danger" href="{% url 'posts:comment_delete' post.id comment.id %}">삭제</a>
+      {% endif %}
+    {% empty %}
+      <!--내용이 없으면 실행됨-->
+      <p class="card-text">!!!!무플방지!!!!</p>
+    {% endfor %}
+  </div>
+  <!--댓글을 작성하는 공간-->
   <div class="card-body">
     <!--몇번글에 댓글을 달지?-->
     <form action="{% url 'posts:comment_create' post.id %}" method="post">
@@ -40,7 +63,5 @@
       {{comment_form.content}}
       <input type="submit" value="제출"/>
     </form>
-      
-
   </div>
 </div>
