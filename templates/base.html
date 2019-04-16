@@ -20,13 +20,12 @@
         <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
             <ul class="navbar-nav">
                 {% if user.is_authenticated %}
-                <h1>{{user}}</h1>
-                    <!--글쓰기, 마이페이지, 로그아웃-->
+                    <!--글쓰기, 마이페이지, 로그아웃--> 
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'posts:create' %}">New</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">MyPage</a>
+                        <a class="nav-link" href="{% url 'accounts:user_page' user.id %}">MyPage</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'accounts:logout' %}">LogOut</a>
